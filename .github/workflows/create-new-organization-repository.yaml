@@ -1,0 +1,27 @@
+# https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: create-new-organization-repository
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: ''
+        required: false
+        default: 'new-project'
+      template_repo:
+        description: ''
+        required: false
+        default: 'vorprog/template'
+env:
+  REPO_OWNER: vorprog
+  REPO_NAME: ${{ github.event.inputs.repo_name }}
+  GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
+jobs:
+  create-repo:
+    defaults:
+      run:
+        shell: bash -ex {0} # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#custom-shell
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          gh repo create $REPO_NAME  --confirm --enable-issues --template ${{ github.events.inputs.template }}
+          gh api /repos/$REPO_OWNER/$REPO_NAME/branches/main/protection -f body='{ "required_pull_request_reviews": { "require_code_owner_reviews": true }, "allow_force_pushes": false, "allow_deletions": false}'
