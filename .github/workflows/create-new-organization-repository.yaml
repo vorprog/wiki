@@ -15,7 +15,7 @@ env:
   TRUSTED_ACTORS: richardsnider
   ORGANIZATION: vorprog
   REPO_NAME: ${{ github.event.inputs.name_of_new_repo }}
-  GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
   BRANCH_PROTECTION_RULES: |
     { 
       "required_pull_request_reviews": { 
