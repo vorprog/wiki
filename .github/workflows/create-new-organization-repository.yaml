@@ -35,6 +35,5 @@ jobs:
     steps: # if [[ $ADMIN_USERS ~= $GITHUB_ACTOR ]]; then echo "User $GITHUB_ACTOR is not on the admins team!" && exit 1; fi
       - run: |
           export ADMIN_USERS=$(gh api /orgs/$ORGANIZATION/teams/admins/members --jq '.[].login')
-          echo $GITHUB_ACTOR
-          gh repo create $REPO_NAME  --confirm --public --template='$TEMPLATE_REPO'
+          gh repo create $REPO_NAME  --confirm --public --template='${{ github.events.inputs.template_repo }}'
           gh api /repos/$ORGANIZATION/$REPO_NAME/branches/main/protection -f body='$BRANCH_PROTECTION_RULES'
