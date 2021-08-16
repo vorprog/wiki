@@ -3,20 +3,31 @@ name: create-new-organization-repository
 on:
   workflow_dispatch:
     inputs:
-      repo_name:
+      name_of_new_repo:
         description: ''
         required: false
-        default: 'new-project'
+        default: new-project
       template_repo:
-        description: ''
+        description: 'https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/creating-a-template-repository'
         required: false
-        default: 'vorprog/template'
+        default: vorprog/ui-template
 env:
+  TRUSTED_ACTORS: richardsnider
   REPO_OWNER: vorprog
-  REPO_NAME: ${{ github.event.inputs.repo_name }}
+  REPO_NAME: ${{ github.event.inputs.name_of_new_repo }}
   GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
+  BRANCH_PROTECTION_RULES: |
+    { 
+      "required_pull_request_reviews": { 
+        "require_code_owner_reviews": true 
+      },
+      "restrictions": { 
+        "users": [ "richardsnider" ]
+      }
+    }
 jobs:
   create-repo:
+    if: ${{ contains($TRUSTED_ACTORS, github.actor) }}
     defaults:
       run:
         shell: bash -ex {0} # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#custom-shell
@@ -24,4 +35,4 @@ jobs:
     steps:
       - run: |
           gh repo create $REPO_NAME  --confirm --enable-issues --template ${{ github.events.inputs.template }}
-          gh api /repos/$REPO_OWNER/$REPO_NAME/branches/main/protection -f body='{ "required_pull_request_reviews": { "require_code_owner_reviews": true }, "allow_force_pushes": false, "allow_deletions": false}'
+          gh api /repos/$REPO_OWNER/$REPO_NAME/branches/main/protection -f body='$BRANCH_PROTECTION_RULES'
