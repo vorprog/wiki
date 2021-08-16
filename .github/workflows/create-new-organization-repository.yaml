@@ -36,5 +36,5 @@ jobs:
       - run: |
           export ADMIN_USERS=$(gh api /orgs/$ORGANIZATION/teams/admins/members --jq '.[].login')
           echo $GITHUB_ACTOR
-          gh repo create $REPO_NAME  --confirm --public --enable-issues --template='$TEMPLATE_REPO'
+          gh repo create $REPO_NAME  --confirm --public --template='$TEMPLATE_REPO'
           gh api /repos/$ORGANIZATION/$REPO_NAME/branches/main/protection -f body='$BRANCH_PROTECTION_RULES'
