@@ -17,17 +17,16 @@ env:
   ORGANIZATION: vorprog
   REPO_NAME: ${{ github.event.inputs.name_of_new_repo }}
   TEMPLATE_REPO: ${{ github.event.inputs.template_repo }}
-  BRANCH_PROTECTION_RULES: >-
-    -F required_pull_request_reviews.require_code_owner_reviews='true'
-    -F restrictions.teams='[ "vorprog/admins" ]'
+  # BRANCH_PROTECTION_RULES: >- -F required_pull_request_reviews.require_code_owner_reviews='true' -F restrictions.teams='[ "vorprog/admins" ]'
 jobs:
   create-repo:
     defaults:
       run:
         shell: bash -ex {0} # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#custom-shell
     runs-on: ubuntu-latest
-    steps: # if [[ $ADMIN_USERS ~= $GITHUB_ACTOR ]]; then echo "User $GITHUB_ACTOR is not on the admins team!" && exit 1; fi
+    steps:
+    # gh api -H 'Accept: application/vnd.github.baptiste-preview+json' repos/$TEMPLATE_REPO/generate -f owner='vorprog' -f name='new-project'
       - run: |
           export ADMIN_USERS=$(gh api /orgs/$ORGANIZATION/teams/admins/members --jq '.[].login')
-          gh api -H 'Accept: application/vnd.github.baptiste-preview+json' repos/$TEMPLATE_REPO/generate -f owner='vorprog' -f name='new-project'
-          gh api -H 'Accept: application/vnd.github.v3.raw+json' repos/$ORGANIZATION/$REPO_NAME/branches/main/protection $BRANCH_PROTECTION_RULES
+          if [[ $ADMIN_USERS !=~ $GITHUB_ACTOR ]]; then echo "User $GITHUB_ACTOR is not on the admins team!" && exit 1; fi
+          gh api -H 'Accept: application/vnd.github.v3.raw+json' repos/$ORGANIZATION/$REPO_NAME/branches/main/protection -F required_pull_request_reviews.require_code_owner_reviews=true -F restrictions.teams=["vorprog/admins"]
