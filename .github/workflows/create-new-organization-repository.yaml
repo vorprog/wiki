@@ -32,9 +32,9 @@ jobs:
       run:
         shell: bash -ex {0} # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#custom-shell
     runs-on: ubuntu-latest
-    steps:
+    steps: # if [[ $ADMIN_USERS ~= $GITHUB_ACTOR ]]; then echo "User $GITHUB_ACTOR is not on the admins team!" && exit 1; fi
       - run: |
           export ADMIN_USERS=$(gh api /orgs/$ORGANIZATION/teams/admins/members --jq '.[].login')
-          if [[ $ADMIN_USERS ~= $GITHUB_ACTOR ]]; then echo "User $GITHUB_ACTOR is not on the admins team!" && exit 1; fi
+          echo $GITHUB_ACTOR
           gh repo create $REPO_NAME  --confirm --public --enable-issues --template='$TEMPLATE_REPO'
           gh api /repos/$ORGANIZATION/$REPO_NAME/branches/main/protection -f body='$BRANCH_PROTECTION_RULES'
