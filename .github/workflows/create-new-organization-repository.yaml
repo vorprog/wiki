@@ -27,7 +27,7 @@ env:
     }
 jobs:
   create-repo:
-    if: ${{ contains(env.TRUSTED_ACTORS, github.actor) }}
+    if: ${{ contains(${{ env.TRUSTED_ACTORS }}, github.actor) }}
     defaults:
       run:
         shell: bash -ex {0} # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#custom-shell
