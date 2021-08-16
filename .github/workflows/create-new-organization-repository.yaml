@@ -28,5 +28,6 @@ jobs:
           # export ADMIN_USERS=$(gh api /orgs/$ORGANIZATION/teams/admins/members --jq '.[].login')
           # if [[ ! $("$ADMIN_USERS" =~ "$GITHUB_ACTOR") ]]; then echo "User $GITHUB_ACTOR is not on the admins team!" && exit 1; fi
       - run: |
-          gh api -H 'Accept: application/vnd.github.baptiste-preview+json' repos/$TEMPLATE_REPO/generate -f owner='vorprog' -f name='new-project'
+          gh api -H 'Accept: application/vnd.github.baptiste-preview+json' repos/$TEMPLATE_REPO/generate -f owner='$ORGANIZATION' -f name='$REPO_NAME'
+          sleep 5
           gh api -H 'Accept: application/vnd.github.v3.raw+json' repos/$ORGANIZATION/$REPO_NAME/branches/main/protection -F required_pull_request_reviews.require_code_owner_reviews=true -F restrictions.teams=["vorprog/admins"]
