@@ -35,5 +35,5 @@ jobs:
     steps: # if [[ $ADMIN_USERS ~= $GITHUB_ACTOR ]]; then echo "User $GITHUB_ACTOR is not on the admins team!" && exit 1; fi
       - run: |
           export ADMIN_USERS=$(gh api /orgs/$ORGANIZATION/teams/admins/members --jq '.[].login')
-          gh api -H 'Accept: application/vnd.github.v3.raw+json' /repos/$TEMPLATE_REPO/generate -f body='{ "owner": "$ORGANIZATION", "name": "$REPO_NAME" }'
-          gh api -H 'Accept: application/vnd.github.v3.raw+json' /repos/$ORGANIZATION/$REPO_NAME/branches/main/protection -f body='$BRANCH_PROTECTION_RULES'
+          gh api -H 'Accept: application/vnd.github.v3.raw+json' repos/$TEMPLATE_REPO/generate -f body='{ "owner": "vorprog", "name": "new-project" }'
+          gh api -H 'Accept: application/vnd.github.v3.raw+json' repos/$ORGANIZATION/$REPO_NAME/branches/main/protection -f body='$BRANCH_PROTECTION_RULES'
